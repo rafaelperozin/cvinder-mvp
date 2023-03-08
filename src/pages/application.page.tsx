@@ -33,10 +33,11 @@ import {
   CompalingText,
   InputError,
   InputWrapper,
+  StyledSelect,
 } from "src/styles/Form";
 import { txt } from "src/styles/theme/typography";
 import { colors } from "src/styles/theme/colors";
-import { Description, Row, Topic } from "src/styles/Theme";
+import { Description, Row, Spacer, Topic } from "src/styles/Theme";
 
 const StyledPatternFormat = styled(PatternFormat)`
   border: 0.5px solid ${colors.grey.two};
@@ -77,6 +78,7 @@ export const Application = observer(() => {
   console.log(name, email);
   const [applicationStatus, setApplicationStatus] = useState<StatusResponse>();
   const [cvError, setCvError] = useState<string | null>(null);
+
   const {
     register,
     control,
@@ -252,10 +254,22 @@ export const Application = observer(() => {
                 <Description>{salary}</Description>
               </Row>
 
-              <label>CV</label>
-              <span>
-                Envie seu CV em formato PDF - Tamanho max. do arquivo: 500KB
-              </span>
+              <Title>CV</Title>
+              <Row>
+                <Topic>Envie seu CV: </Topic>
+                <Description>PDF (max. 500KB)</Description>
+              </Row>
+
+              {/* <InputFile
+                buttonText="Escolher arquivo"
+                buttonStyles={{ backgroundColor: "blue", color: "white" }}
+                accept="application/pdf"
+                onChange={(e) => handleInputCv(e.target)}
+                name="fileInput"
+                id="fileInput"
+              />
+              {selectedFile && <div>Nome do arquivo: {selectedFile.name}</div>} */}
+
               <input
                 name="cv"
                 type="file"
@@ -315,6 +329,7 @@ export const Application = observer(() => {
               </Row>
 
               <Title>Complete as sentenças:</Title>
+              <Spacer vertical="10px" />
 
               <StyledLabel>
                 {CandidateSentencesTranslated["I_AM"]}...
@@ -345,7 +360,8 @@ export const Application = observer(() => {
 
               <StyledLabel>Tech Skills</StyledLabel>
 
-              <Select
+              <Spacer vertical="10px" />
+              <StyledSelect
                 isMulti
                 name="tech_skills"
                 options={defaultOptions}

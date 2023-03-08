@@ -2,6 +2,16 @@ import styled from "styled-components";
 import { colors } from "../styles/theme/colors";
 import { txt } from "src/styles/theme/typography";
 
+interface SpacerProps {
+  horizontal?: string;
+  vertical?: string;
+}
+
+export const Spacer = styled.div<SpacerProps>`
+  margin-right: ${(props) => props.horizontal || 0};
+  margin-top: ${(props) => props.vertical || 0};
+`;
+
 export const Topic = styled.h2`
   margin: 10px 0 0;
   font-size: ${txt.size.regular};

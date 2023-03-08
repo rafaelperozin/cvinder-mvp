@@ -1,31 +1,46 @@
-import apiConnect from 'src/api/connect';
-import { AccountSchema, AccountType, CreateAccountInput } from 'src/models/account.models';
-import { ResponseStatus } from 'src/models/api.model';
-import { AuthenticationInput, LoginResponse } from 'src/models/auth.model';
-import { AvailableTags, CandidateLevel, CandidateSentences, CreateCandidateInput } from 'src/models/candidate.model';
-import { cast, flow, types } from 'mobx-state-tree';
-import { AxiosResponse } from 'axios';
-import { ApplicationStoreInitialState } from 'src/stores/initial-states/application.state';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import apiConnect from "src/api/connect";
+import {
+  AccountSchema,
+  AccountType,
+  CreateAccountInput,
+} from "src/models/account.models";
+import { ResponseStatus } from "src/models/api.model";
+import { AuthenticationInput, LoginResponse } from "src/models/auth.model";
+import {
+  AvailableTags,
+  CandidateLevel,
+  CandidateSentences,
+  CreateCandidateInput,
+} from "src/models/candidate.model";
+import { cast, flow, types } from "mobx-state-tree";
+import { AxiosResponse } from "axios";
+import { ApplicationStoreInitialState } from "src/stores/initial-states/application.state";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 
 const multipartHeader = {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  }
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+};
 
 export const ApplicationStore = types
-  .model('ApplicationStore', {
+  .model("ApplicationStore", {
     userToken: types.maybe(types.string),
     id: types.maybe(types.string),
     email: types.maybe(types.string),
-    type: types.enumeration<AccountType>("AccountType", Object.values(AccountType)),
+    type: types.enumeration<AccountType>(
+      "AccountType",
+      Object.values(AccountType)
+    ),
     tempPass: types.string,
     name: types.maybe(types.string),
     phone: types.maybe(types.string),
     title: types.string,
     linkedin: types.maybe(types.string),
-    level: types.enumeration<CandidateLevel>("CandidateLevel", Object.values(CandidateLevel)),
+    level: types.enumeration<CandidateLevel>(
+      "CandidateLevel",
+      Object.values(CandidateLevel)
+    ),
     salary: types.number,
     tags: types.frozen<AvailableTags[]>(),
     cityId: types.string,
@@ -37,31 +52,43 @@ export const ApplicationStore = types
     step: types.number,
   })
   .actions((self) => ({
-    setUserToken: (token: string) => self.userToken = token,
-    setId: (id: string) => self.id = id,
-    setEmail: (email: string) => self.email = email,
-    setName: (name: string) => self.name = name,
-    setPhone: (phone: string) => self.phone = phone,
-    setLinkedin: (linkedin: string) => self.linkedin = linkedin,
-    setProcessing: (processing: boolean) => self.processing = processing,
-    setStep: (step: number) => self.step = step,
+    setUserToken: (token: string) => (self.userToken = token),
+    setId: (id: string) => (self.id = id),
+    setEmail: (email: string) => (self.email = email),
+    setName: (name: string) => (self.name = name),
+    setPhone: (phone: string) => (self.phone = phone),
+    setLinkedin: (linkedin: string) => (self.linkedin = linkedin),
+    setProcessing: (processing: boolean) => (self.processing = processing),
+    setStep: (step: number) => (self.step = step),
     setTechSkills: (value: any) => {
       const skills = value.map((skill: any) => skill.value);
       self.techSkills = cast(skills);
     },
   }))
   .actions((self) => ({
-    createAccount: flow(function* ({ email, password, type }: CreateAccountInput) {
-      console.log('CHEGOU')
+    createAccount: flow(function* ({
+      email,
+      password,
+      type,
+    }: CreateAccountInput) {
+      console.log("CHEGOU");
       try {
-        const accountInfo = { email, password, type, validateEmailOnFront: true };
-        const { data }: AxiosResponse<AccountSchema> = yield apiConnect.post('/account', accountInfo);
+        const accountInfo = {
+          email,
+          password,
+          type,
+          validateEmailOnFront: true,
+        };
+        const { data }: AxiosResponse<AccountSchema> = yield apiConnect.post(
+          "/account",
+          accountInfo
+        );
         self.email = email;
         self.id = data.id;
         self.tempVerificationToken = data.verificationToken;
         return {
           status: ResponseStatus.SUCCESS,
-          message: 'Authenticated',
+          message: "Authenticated",
         };
       } catch (error) {
         throw error;
@@ -72,20 +99,23 @@ export const ApplicationStore = types
         yield apiConnect.post(`/account/validate-email/${token}`);
         return {
           status: ResponseStatus.SUCCESS,
-          message: 'Authenticated',
+          message: "Authenticated",
         };
       } catch (error) {
         throw error;
       }
     }),
-    authenticate: flow(function* ({email, password}: AuthenticationInput) {
+    authenticate: flow(function* ({ email, password }: AuthenticationInput) {
       try {
-        const { data }: AxiosResponse<LoginResponse> = yield apiConnect.post('/auth/login', { email, password });
+        const { data }: AxiosResponse<LoginResponse> = yield apiConnect.post(
+          "/auth/login",
+          { email, password }
+        );
         self.isAuthenticated = true;
         self.userToken = data.token;
         return {
           status: ResponseStatus.SUCCESS,
-          message: 'Authenticated',
+          message: "Authenticated",
         };
       } catch (error) {
         throw error;
@@ -93,12 +123,12 @@ export const ApplicationStore = types
     }),
     createCandidate: flow(function* (input: CreateCandidateInput) {
       try {
-        console.log('createCandidate', typeof input);
-        const repsonse = yield apiConnect.post('/candidate', input);
-        console.log('createCandidate response', repsonse);
+        console.log("createCandidate", typeof input);
+        const repsonse = yield apiConnect.post("/candidate", input);
+        console.log("createCandidate response", repsonse);
         return {
           status: ResponseStatus.SUCCESS,
-          message: 'Candidate created',
+          message: "Candidate created",
         };
       } catch (error) {
         throw error;
@@ -110,13 +140,17 @@ export const ApplicationStore = types
         const formData = new FormData();
         formData.append("file", file);
 
-        const repsonse = yield apiConnect.post('/candidate/cv', formData, multipartHeader);
+        const repsonse = yield apiConnect.post(
+          "/candidate/cv",
+          formData,
+          multipartHeader
+        );
         self.cv = repsonse.data.cv;
         self.processing = false;
 
         return {
           status: ResponseStatus.SUCCESS,
-          message: 'CV added succesfully',
+          message: "CV added succesfully",
         };
       } catch (error) {
         self.processing = false;
@@ -124,44 +158,52 @@ export const ApplicationStore = types
       }
     }),
     completeApplication: flow(function* (
-      i_am: string, i_am_proud_of: string, i_like: string, i_want: string, i_will: string
+      i_am: string,
+      i_am_proud_of: string,
+      i_like: string,
+      i_want: string,
+      i_will: string
     ) {
       self.processing = true;
 
       const sentences = {
         candidateSentences: [
           i_am && {
-            "candidateSentenceType": "I_AM",
-            "sentence": i_am
+            candidateSentenceType: "I_AM",
+            sentence: i_am,
           },
           i_am_proud_of && {
-            "candidateSentenceType": "I_AM",
-            "sentence": i_am_proud_of
+            candidateSentenceType: "I_AM",
+            sentence: i_am_proud_of,
           },
           i_like && {
-            "candidateSentenceType": "I_AM",
-            "sentence": i_like
+            candidateSentenceType: "I_AM",
+            sentence: i_like,
           },
           i_want && {
-            "candidateSentenceType": "I_AM",
-            "sentence": i_want
+            candidateSentenceType: "I_AM",
+            sentence: i_want,
           },
           i_will && {
-            "candidateSentenceType": "I_AM",
-            "sentence": i_will
-          }
-        ]
+            candidateSentenceType: "I_AM",
+            sentence: i_will,
+          },
+        ],
       };
 
       console.log({ sentences });
 
       if (sentences.candidateSentences.length > 0) {
         try {
-          const response = yield apiConnect.post('/candidate/sentences', sentences, multipartHeader);
+          const response = yield apiConnect.post(
+            "/candidate/sentences",
+            sentences,
+            multipartHeader
+          );
           console.log(response.data);
           return {
             status: ResponseStatus.SUCCESS,
-            message: 'Sentences added succesfully',
+            message: "Sentences added succesfully",
           };
         } catch (error) {
           throw error;
@@ -169,7 +211,7 @@ export const ApplicationStore = types
       }
 
       if (self.techSkills && self.techSkills.length > 0) {
-        console.log('self.techSkills', self.techSkills)
+        console.log("self.techSkills", self.techSkills);
         // try {
         //   const repsonse = yield apiConnect.post('/candidate/tecskills', self.techSkills, multipartHeader);
         //   self.cv = repsonse.data.cv;
@@ -189,14 +231,18 @@ export const ApplicationStore = types
     }),
   }))
   .actions((self) => ({
-    registerCandidate: flow(function* (data: Partial<CreateCandidateInput & CreateAccountInput>) {
+    registerCandidate: flow(function* (
+      data: Partial<CreateCandidateInput & CreateAccountInput>
+    ) {
       self.processing = true;
       self.name = data.name;
-      self.phone = `+${data.phone!.replace(/\D+/g, '')}`;
+      self.email = data.email;
+      self.phone = `+${data.phone!.replace(/\D+/g, "")}`;
       self.linkedin = data.linkedin;
 
       const candidateInfo = {
         name: self.name!,
+        email: self.email,
         phone: self.phone,
         title: self.title,
         linkedin: self.linkedin!,
@@ -206,20 +252,29 @@ export const ApplicationStore = types
         cityId: self.cityId,
       };
       // console.warn({data})
-      const response = yield self.createAccount({ email: data.email!, password: self.tempPass, type: self.type! as AccountType })
-        .then(() => self.authenticate({ email: data.email!, password: self.tempPass }))
+      const response = yield self
+        .createAccount({
+          email: data.email!,
+          password: self.tempPass,
+          type: self.type! as AccountType,
+        })
+        .then(() =>
+          self.authenticate({ email: data.email!, password: self.tempPass })
+        )
         .then(() => self.validateAccount(self.tempVerificationToken!))
         .then(() => self.createCandidate(candidateInfo))
         .catch(() => ({
           status: ResponseStatus.ERROR,
-          message: 'Sua aplicação falhou. Tente com outro email.',
-        }))
-      console.log('store step', self.step);
+          message: "Sua aplicação falhou. Tente com outro email.",
+        }));
+      console.log("store step", self.step);
       self.step++;
-      console.log('store step new', self.step);
+      console.log("store step new", self.step);
       self.processing = false;
       return response;
     }),
   }));
 
-export const makeApplicationStore = ApplicationStore.create(ApplicationStoreInitialState);
+export const makeApplicationStore = ApplicationStore.create(
+  ApplicationStoreInitialState
+);

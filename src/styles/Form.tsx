@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Select from "react-select";
 import { colors } from "./theme/colors";
 import { txt } from "src/styles/theme/typography";
 
@@ -15,7 +16,6 @@ export const Headline = styled.h1`
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 24px;
   font-weight: ${txt.weight.bold};
   color: ${colors.grey.nine};
 `;
@@ -128,4 +128,73 @@ export const SubmitButton = styled.input`
 
 export const CompalingText = styled.p`
   text-align: center;
+`;
+
+export const FileInput = styled.label`
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  padding: 12px 16px;
+  color: #fff;
+  background-color: ${colors.secondary.regular};
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${colors.secondary.dark};
+  }
+
+  input[type="file"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  svg {
+    margin-right: 0.5rem;
+  }
+`;
+
+export const StyledSelect = styled(Select)`
+  .select__control {
+    height: 42px;
+    border: 0.5px solid ${colors.grey.two};
+    border-radius: 3px;
+    padding: 0 0 0 4px;
+
+    &:focus {
+      border-color: ${colors.secondary.light};
+      outline: 1px solid ${colors.secondary.light};
+    }
+  }
+
+  .select__menu {
+    border-radius: 3px;
+  }
+
+  .select__option {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .select__option--is-focused {
+    background-color: ${colors.grey.one};
+  }
+
+  .select__indicator-separator {
+    display: none;
+  }
+
+  .select__indicator {
+    color: ${colors.grey.six};
+  }
 `;
