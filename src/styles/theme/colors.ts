@@ -24,7 +24,7 @@ export const colors = {
     dark: "#BE6228",
   },
   grey: {
-    one: "#E5E5E5",
+    one: "#F9F9F9",
     two: "#CCCCCC",
     three: "#CDCDCD",
     four: "#B3B3B3",

@@ -6,8 +6,9 @@ export const HeaderContainer = styled.header`
   justify-content: center;
   align-items: center;
   padding: 20px 30px 30px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  border-bottom: 1px solid #ccc;
+  z-index: 100;
 `;
 
 export const HeaderContent = styled.div`

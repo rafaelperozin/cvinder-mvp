@@ -1,4 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
+import styled from "styled-components";
+
 import { observer } from "mobx-react-lite";
 import {
   Controller,
@@ -16,36 +18,43 @@ import { useStore } from "src/contexts/store.context";
 import { ResponseStatus, StatusResponse } from "src/models/api.model";
 import { CandidateSentencesTranslated } from "src/models/candidate.model";
 import Select from "react-select";
+import { defaultOptions } from "./defaultOptions";
+import { defaultValues } from "src/data/defaultValues";
+import {
+  StyledForm,
+  FormContainer,
+  InputContainer,
+  StyledLabel,
+  StyledInput,
+  SubmitButton,
+  StyledTextarea,
+  Headline,
+  Title,
+  CompalingText,
+  InputError,
+  InputWrapper,
+} from "src/styles/Form";
+import { txt } from "src/styles/theme/typography";
+import { colors } from "src/styles/theme/colors";
+import { Description, Row, Topic } from "src/styles/Theme";
+
+const StyledPatternFormat = styled(PatternFormat)`
+  border: 0.5px solid ${colors.grey.two};
+  border-radius: 3px;
+  width: 100%;
+  height: 32px;
+  padding: 4px 4px 4px 15px;
+  font-size: ${txt.size.regular};
+  font-family: "Asap", sans-serif;
+  color: ${colors.grey.nine};
+
+  &:focus {
+    border-color: ${colors.secondary.light};
+    outline: 1px solid ${colors.secondary.light};
+  }
+`;
 
 const resolver = classValidatorResolver(ApplicationStepOneInputs);
-const defaultValues = {
-  name: "Rafa El",
-  email: "test30@test.com",
-  phone: "+55 (13) 72222 5695",
-  linkedin: "https://linkedin.com/in/rafaelep",
-  salary: 232323,
-};
-
-const defaultOptions = [
-  { value: "js", label: "JavaScript" },
-  { value: "ts", label: "TypeScript" },
-  { value: "react", label: "React.js" },
-  { value: "angular", label: "Angular" },
-  { value: "vue", label: "Vue" },
-  { value: "next", label: "Next.js" },
-  { value: "native", label: "React Native" },
-  { value: "node", label: "Node.js" },
-  { value: "python", label: "Python" },
-  { value: "java", label: "Java" },
-  { value: "php", label: "PHP" },
-  { value: "laravel", label: "Laravel" },
-  { value: "ruby", label: "Ruby" },
-  { value: "c", label: "C#" },
-  { value: "plus", label: "C++" },
-  { value: "flutter", label: "Flutter" },
-  { value: "kotlin", label: "Kotlin" },
-  { value: "go", label: "Go" },
-];
 
 type ApplicationInputs = ApplicationStepOneInputs | ApplicationStepTreeInputs;
 
@@ -65,6 +74,7 @@ export const Application = observer(() => {
       setTechSkills,
     },
   } = useStore();
+  console.log(name, email);
   const [applicationStatus, setApplicationStatus] = useState<StatusResponse>();
   const [cvError, setCvError] = useState<string | null>(null);
   const {
@@ -126,129 +136,227 @@ export const Application = observer(() => {
       case 1:
         const formError = errors as FieldErrors<ApplicationStepOneInputs>;
         return (
-          <form onSubmit={handleSubmit(onSubmitOne)}>
-            <label>Nome Completo</label>
-            <input {...register("name", { required: true })} />
-            {formError.name && <span>{formError.name.message}</span>}
+          <FormContainer>
+            <StyledForm onSubmit={handleSubmit(onSubmitOne)}>
+              <InputContainer>
+                <StyledLabel>Nome Completo</StyledLabel>
+                <InputWrapper>
+                  <StyledInput {...register("name", { required: true })} />
+                  {formError.name && (
+                    <InputError>Favor, preencher com um nome válido</InputError>
+                  )}
+                </InputWrapper>
+              </InputContainer>
 
-            <label>E-mail</label>
-            <input {...register("email", { required: true })} />
-            {formError.email && <span>{formError.email.message}</span>}
+              <InputContainer>
+                <StyledLabel>E-mail</StyledLabel>
+                <InputWrapper>
+                  <StyledInput {...register("email", { required: true })} />
+                  {formError.email && (
+                    <InputError>
+                      Favor, preencher com um email válido
+                    </InputError>
+                  )}
+                </InputWrapper>
+              </InputContainer>
 
-            <label>Telefone</label>
-            <Controller
-              control={control}
-              name="phone"
-              render={({ field: { onChange, name, value } }) => (
-                <PatternFormat
-                  format="+55 (##) ##### ####"
-                  name={name}
-                  value={value}
-                  onChange={onChange}
-                  allowEmptyFormatting
-                  mask="_"
-                />
-              )}
-            />
-            {formError.phone && <span>{formError.phone.message}</span>}
+              <InputContainer>
+                <StyledLabel>Telefone</StyledLabel>
+                <InputWrapper>
+                  <Controller
+                    control={control}
+                    name="phone"
+                    render={({ field: { onChange, name, value } }) => (
+                      <StyledPatternFormat
+                        format="+55 (##) ##### ####"
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        allowEmptyFormatting
+                        mask="_"
+                      />
+                    )}
+                  />
+                  {formError.phone && (
+                    <InputError>
+                      Favor, preencher com um número de telefone válido
+                    </InputError>
+                  )}
+                </InputWrapper>
+              </InputContainer>
 
-            <label>LinkedIn</label>
-            <input {...register("linkedin", { required: true })} />
-            {formError.linkedin && <span>{formError.linkedin.message}</span>}
+              <InputContainer>
+                <StyledLabel>LinkedIn</StyledLabel>
+                <InputWrapper>
+                  <StyledInput {...register("linkedin", { required: true })} />
+                  {formError.linkedin && (
+                    <InputError>
+                      Favor, preencher com um endereço de URL
+                    </InputError>
+                  )}
+                </InputWrapper>
+              </InputContainer>
 
-            <label>Pretensão Salarial{"(mensal)"}</label>
-            <input
-              type="number"
-              {...register("salary", { required: true, valueAsNumber: true })}
-            />
-            {formError.salary && <span>{formError.salary.message}</span>}
+              <InputContainer>
+                <StyledLabel>Pretensão Salarial{" (mensal)"}</StyledLabel>
+                <InputWrapper>
+                  <StyledInput
+                    type="number"
+                    {...register("salary", {
+                      required: true,
+                      valueAsNumber: true,
+                    })}
+                  />
+                  {formError.salary && (
+                    <InputError>Favor, preencher com um número</InputError>
+                  )}
+                </InputWrapper>
+              </InputContainer>
 
-            <input type="submit" value="Aplicar Para Vaga" />
-          </form>
+              <SubmitButton type="submit" value="APLICAR PARA VAGA" />
+            </StyledForm>
+          </FormContainer>
         );
       case 2:
         return (
-          <form onSubmit={handleSubmit(onSubmitTwo)}>
-            <h1>Etapa 2 de 3</h1>
-            <h2>Resumo Etapa 1</h2>
-            <p>Nome Completo: {name}</p>
-            <p>E-mail: {email}</p>
-            <p>Telefone: {phone}</p>
-            <p>
-              LinkedIn:{" "}
-              <a href={linkedin} target="_blank" rel="noreferrer">
-                {linkedin}
-              </a>
-            </p>
-            <p>Pretensão Salarial: {salary}</p>
+          <FormContainer>
+            <StyledForm onSubmit={handleSubmit(onSubmitTwo)}>
+              <Headline>Etapa 2 de 3</Headline>
+              <Title>Resumo Etapa 1</Title>
+              <Row>
+                <Topic>Nome completo: </Topic>
+                <Description>{name}</Description>
+              </Row>
 
-            <label>CV</label>
-            <span>
-              Envie seu CV em formato PDF - Tamanho max. do arquivo: 500KB
-            </span>
-            <input
-              name="cv"
-              type="file"
-              accept="application/pdf"
-              onChange={(e) => handleInputCv(e.target)}
-              required
-            />
-            {cvError && <span>{cvError}</span>}
+              <Row>
+                <Topic>Email: </Topic>
+                <Description>{email}</Description>
+              </Row>
 
-            <input type="submit" value="Avançar" />
-          </form>
+              <Row>
+                <Topic>Telefone: </Topic>
+                <Description>{phone}</Description>
+              </Row>
+
+              <Row>
+                <Topic>LinkedIn: </Topic>
+                <Description>
+                  <a href={linkedin} target="_blank" rel="noreferrer">
+                    {linkedin}
+                  </a>
+                </Description>
+              </Row>
+
+              <Row>
+                <Topic>Pretensão Salarial: </Topic>
+                <Description>{salary}</Description>
+              </Row>
+
+              <label>CV</label>
+              <span>
+                Envie seu CV em formato PDF - Tamanho max. do arquivo: 500KB
+              </span>
+              <input
+                name="cv"
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => handleInputCv(e.target)}
+                required
+              />
+              {cvError && <span>{cvError}</span>}
+
+              <SubmitButton type="submit" value="AVANÇAR" />
+            </StyledForm>
+          </FormContainer>
         );
       case 3:
         return (
-          <form onSubmit={handleSubmit(onSubmitTree)}>
-            <h1>Etapa 3 de 3</h1>
-            <h2>Resumo Etapa 3</h2>
-            <p>Nome Completo: {name}</p>
-            <p>E-mail: {email}</p>
-            <p>Telefone: {phone}</p>
-            <p>
-              LinkedIn:{" "}
-              <a href={linkedin} target="_blank" rel="noreferrer">
-                {linkedin}
-              </a>
-            </p>
-            <p>Pretensão Salarial: {salary}</p>
-            <p>
-              CV:{" "}
-              <a href={cv} target="_blank" rel="noreferrer">
-                Ver Curriculum
-              </a>
-            </p>
+          <FormContainer>
+            <StyledForm onSubmit={handleSubmit(onSubmitTree)}>
+              <Headline>Etapa 3 de 3</Headline>
+              <Title>Resumo Etapa 3</Title>
 
-            <h2>Complete as sentenças:</h2>
+              <Row>
+                <Topic>Nome completo: </Topic>
+                <Description>{name}</Description>
+              </Row>
 
-            <label>{CandidateSentencesTranslated["I_AM"]}...</label>
-            <textarea {...register("i_am", { required: true })} />
+              <Row>
+                <Topic>Email: </Topic>
+                <Description>{email}</Description>
+              </Row>
 
-            <label>{CandidateSentencesTranslated["I_LIKE"]}...</label>
-            <textarea {...register("i_like", { required: true })} />
+              <Row>
+                <Topic>Telefone: </Topic>
+                <Description>{phone || ""}</Description>
+              </Row>
 
-            <label>{CandidateSentencesTranslated["I_WANT"]}...</label>
-            <textarea {...register("i_want", { required: true })} />
+              <Row>
+                <Topic>LinkedIn: </Topic>
+                <Description>
+                  <a href={linkedin} target="_blank" rel="noreferrer">
+                    {linkedin}
+                  </a>
+                </Description>
+              </Row>
 
-            <label>{CandidateSentencesTranslated["I_WILL"]}...</label>
-            <textarea {...register("i_will", { required: true })} />
+              <Row>
+                <Topic>Pretensão Salarial: </Topic>
+                <Description>{salary}</Description>
+              </Row>
 
-            <label>{CandidateSentencesTranslated["I_AM_PROUD_OF"]}...</label>
-            <textarea {...register("i_am_proud_of", { required: true })} />
+              <Row>
+                <Topic>CV: </Topic>
+                <Description>
+                  <a href={cv} target="_blank" rel="noreferrer">
+                    Ver Curriculum
+                  </a>
+                </Description>
+              </Row>
 
-            <label>Tech Skills</label>
-            <Select
-              isMulti
-              name="tech_skills"
-              options={defaultOptions}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={setTechSkills}
-            />
+              <Title>Complete as sentenças:</Title>
 
-            <input type="submit" value="Finalizar Aplicação" />
-          </form>
+              <StyledLabel>
+                {CandidateSentencesTranslated["I_AM"]}...
+              </StyledLabel>
+              <StyledTextarea {...register("i_am", { required: true })} />
+
+              <StyledLabel>
+                {CandidateSentencesTranslated["I_LIKE"]}...
+              </StyledLabel>
+              <StyledTextarea {...register("i_like", { required: true })} />
+
+              <StyledLabel>
+                {CandidateSentencesTranslated["I_WANT"]}...
+              </StyledLabel>
+              <StyledTextarea {...register("i_want", { required: true })} />
+
+              <StyledLabel>
+                {CandidateSentencesTranslated["I_WILL"]}...
+              </StyledLabel>
+              <StyledTextarea {...register("i_will", { required: true })} />
+
+              <StyledLabel>
+                {CandidateSentencesTranslated["I_AM_PROUD_OF"]}...
+              </StyledLabel>
+              <StyledTextarea
+                {...register("i_am_proud_of", { required: true })}
+              />
+
+              <StyledLabel>Tech Skills</StyledLabel>
+
+              <Select
+                isMulti
+                name="tech_skills"
+                options={defaultOptions}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={setTechSkills}
+              />
+
+              <SubmitButton type="submit" value="FINALIZAR APLICAÇÃO" />
+            </StyledForm>
+          </FormContainer>
         );
       default:
         return (
@@ -281,11 +389,19 @@ export const Application = observer(() => {
   return (
     <main>
       {processing ? (
-        <p>Por favor aguarde, estamos processando sua aplicação</p>
+        <FormContainer>
+          <CompalingText>
+            Por favor aguarde, estamos processando sua aplicação
+          </CompalingText>
+        </FormContainer>
       ) : applicationStatus?.status === ResponseStatus.ERROR ? (
-        <p>{applicationStatus.message}</p>
+        <FormContainer>
+          <CompalingText>{applicationStatus.message}</CompalingText>
+        </FormContainer>
       ) : applicationStatus?.status === ResponseStatus.SUCCESS && step === 3 ? (
-        <p>{applicationStatus.message}</p>
+        <FormContainer>
+          <CompalingText>{applicationStatus.message}</CompalingText>
+        </FormContainer>
       ) : (
         displayForm
       )}
