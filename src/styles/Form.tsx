@@ -31,7 +31,7 @@ export const InputContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 64%;
   align-items: center;
-  padding: 16px 0;
+  padding: 20px 0;
 
   @media (max-width: 767px) {
     display: block;
@@ -77,18 +77,19 @@ export const StyledInput = styled.input`
 `;
 
 export const InputError = styled.p`
-  position: relative;
-  bottom: 6px;
-  margin-bottom: 0;
+  position: absolute;
+  font-size: ${txt.size.small};
+  bottom: -34px;
   color: ${colors.tertiary.regular};
 `;
 
 export const StyledTextarea = styled.textarea`
+  position: relative;
   border: 0.5px solid ${colors.grey.two};
   border-radius: 3px;
   height: 32px;
   padding: 15px 15px 4px;
-  margin-bottom: 30px;
+  margin-bottom: 36px;
   font-size: ${txt.size.regular};
   font-family: "Asap", sans-serif;
   color: ${colors.grey.nine};
@@ -119,7 +120,7 @@ export const SubmitButton = styled.input`
   color: #fff;
   background-color: ${colors.primary.light};
   cursor: pointer;
-  transition: all 1s;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
     background-color: ${colors.primary.regular};
@@ -128,40 +129,6 @@ export const SubmitButton = styled.input`
 
 export const CompalingText = styled.p`
   text-align: center;
-`;
-
-export const FileInput = styled.label`
-  display: inline-block;
-  position: relative;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-  padding: 12px 16px;
-  color: #fff;
-  background-color: ${colors.secondary.regular};
-  border-radius: 0.25rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-
-  &:hover {
-    background-color: ${colors.secondary.dark};
-  }
-
-  input[type="file"] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  svg {
-    margin-right: 0.5rem;
-  }
 `;
 
 export const StyledSelect = styled(Select)`

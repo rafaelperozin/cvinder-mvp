@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 
 import { observer } from "mobx-react-lite";
@@ -17,8 +17,7 @@ import { PatternFormat } from "react-number-format";
 import { useStore } from "src/contexts/store.context";
 import { ResponseStatus, StatusResponse } from "src/models/api.model";
 import { CandidateSentencesTranslated } from "src/models/candidate.model";
-import Select from "react-select";
-import { defaultOptions } from "./defaultOptions";
+import { defaultOptions } from "../data/defaultOptions";
 import { defaultValues } from "src/data/defaultValues";
 import {
   StyledForm,
@@ -38,6 +37,7 @@ import {
 import { txt } from "src/styles/theme/typography";
 import { colors } from "src/styles/theme/colors";
 import { Description, Row, Spacer, Topic } from "src/styles/Theme";
+import { FileInput } from "src/components/FilpeInput.tsx";
 
 const StyledPatternFormat = styled(PatternFormat)`
   border: 0.5px solid ${colors.grey.two};
@@ -75,9 +75,9 @@ export const Application = observer(() => {
       setTechSkills,
     },
   } = useStore();
-  console.log(name, email);
-  const [applicationStatus, setApplicationStatus] = useState<StatusResponse>();
+  const [applicationStatus] = useState<StatusResponse>();
   const [cvError, setCvError] = useState<string | null>(null);
+  const [filename, setFilename] = useState<string | undefined>(undefined);
 
   const {
     register,
@@ -106,7 +106,7 @@ export const Application = observer(() => {
   const onSubmitTree: SubmitHandler<ApplicationInputs> = useCallback(
     async (data) => {
       console.log({ data });
-      // const application = await registerCandidate(data);
+      // const application = await registerCandidate(data as ApplicationStepTreeInputs);
       // setApplicationStatus(application);
     },
     []
@@ -118,6 +118,8 @@ export const Application = observer(() => {
       // const allowedFormats = /(.*?)\.(pdf|doc)$/;
       const file =
         input.files?.length && input.files?.length > 0 && input.files[0];
+
+      setFilename(input.files?.[0].name);
 
       if (file) {
         if (file.size < 500000) {
@@ -181,7 +183,7 @@ export const Application = observer(() => {
                   />
                   {formError.phone && (
                     <InputError>
-                      Favor, preencher com um número de telefone válido
+                      Favor, preencher com um número válido
                     </InputError>
                   )}
                 </InputWrapper>
@@ -260,22 +262,11 @@ export const Application = observer(() => {
                 <Description>PDF (max. 500KB)</Description>
               </Row>
 
-              {/* <InputFile
-                buttonText="Escolher arquivo"
-                buttonStyles={{ backgroundColor: "blue", color: "white" }}
-                accept="application/pdf"
-                onChange={(e) => handleInputCv(e.target)}
-                name="fileInput"
-                id="fileInput"
-              />
-              {selectedFile && <div>Nome do arquivo: {selectedFile.name}</div>} */}
-
-              <input
-                name="cv"
-                type="file"
-                accept="application/pdf"
-                onChange={(e) => handleInputCv(e.target)}
-                required
+              <FileInput
+                handleChange={(e) => {
+                  handleInputCv(e.target);
+                }}
+                filename={filename}
               />
               {cvError && <span>{cvError}</span>}
 
@@ -284,6 +275,7 @@ export const Application = observer(() => {
           </FormContainer>
         );
       case 3:
+        const sentenceErrors = errors as FieldErrors<ApplicationStepTreeInputs>;
         return (
           <FormContainer>
             <StyledForm onSubmit={handleSubmit(onSubmitTree)}>
@@ -335,21 +327,41 @@ export const Application = observer(() => {
                 {CandidateSentencesTranslated["I_AM"]}...
               </StyledLabel>
               <StyledTextarea {...register("i_am", { required: true })} />
+              {sentenceErrors.i_am && (
+                <InputError>
+                  Favor, preencher com uma sentença válida
+                </InputError>
+              )}
 
               <StyledLabel>
                 {CandidateSentencesTranslated["I_LIKE"]}...
               </StyledLabel>
               <StyledTextarea {...register("i_like", { required: true })} />
+              {sentenceErrors.i_like && (
+                <InputError>
+                  Favor, preencher com uma sentença válida
+                </InputError>
+              )}
 
               <StyledLabel>
                 {CandidateSentencesTranslated["I_WANT"]}...
               </StyledLabel>
               <StyledTextarea {...register("i_want", { required: true })} />
+              {sentenceErrors.i_want && (
+                <InputError>
+                  Favor, preencher com uma sentença válida
+                </InputError>
+              )}
 
               <StyledLabel>
                 {CandidateSentencesTranslated["I_WILL"]}...
               </StyledLabel>
               <StyledTextarea {...register("i_will", { required: true })} />
+              {sentenceErrors.i_will && (
+                <InputError>
+                  Favor, preencher com uma sentença válida
+                </InputError>
+              )}
 
               <StyledLabel>
                 {CandidateSentencesTranslated["I_AM_PROUD_OF"]}...
@@ -357,6 +369,11 @@ export const Application = observer(() => {
               <StyledTextarea
                 {...register("i_am_proud_of", { required: true })}
               />
+              {sentenceErrors.i_am_proud_of && (
+                <InputError>
+                  Favor, preencher com uma sentença válida
+                </InputError>
+              )}
 
               <StyledLabel>Tech Skills</StyledLabel>
 
@@ -400,6 +417,7 @@ export const Application = observer(() => {
     salary,
     setTechSkills,
     step,
+    filename,
   ]);
 
   return (

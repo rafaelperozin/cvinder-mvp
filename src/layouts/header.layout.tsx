@@ -31,9 +31,7 @@ export const Header = () => {
     application: { step, processing },
   } = useStore();
 
-  useEffect(() => {
-    console.log(`Current step: ${step}`);
-  }, [step, processing]);
+  useEffect(() => {}, [step, processing]);
 
   return (
     <HeaderContainer>
