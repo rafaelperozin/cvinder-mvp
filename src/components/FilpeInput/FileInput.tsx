@@ -25,7 +25,6 @@ export const FileInput: React.FC<FileInputProps> = ({
           type="file"
           accept="application/pdf"
           onChange={handleChange}
-          required
           style={{ display: "none" }}
         />
       </UploadButton>

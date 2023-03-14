@@ -37,7 +37,7 @@ import {
 import { txt } from "src/styles/theme/typography";
 import { colors } from "src/styles/theme/colors";
 import { Description, Row, Spacer, Topic } from "src/styles/Theme";
-import { FileInput } from "src/components/FilpeInput.tsx";
+import { FileInput } from "src/components/FilpeInput/FileInput";
 
 const StyledPatternFormat = styled(PatternFormat)`
   border: 0.5px solid ${colors.grey.two};
@@ -56,6 +56,7 @@ const StyledPatternFormat = styled(PatternFormat)`
 `;
 
 const resolver = classValidatorResolver(ApplicationStepOneInputs);
+const resolverStep3 = classValidatorResolver(ApplicationStepTreeInputs);
 
 type ApplicationInputs = ApplicationStepOneInputs | ApplicationStepTreeInputs;
 
@@ -88,6 +89,10 @@ export const Application = observer(() => {
     resolver,
     defaultValues,
   });
+
+  const testFormTree = useForm<ApplicationStepTreeInputs>({
+    resolver: resolverStep3,
+  });
   const {
     application: { registerCandidate },
   } = useStore();
@@ -103,7 +108,7 @@ export const Application = observer(() => {
 
   const onSubmitTwo = useCallback(() => setStep(3), [setStep]);
 
-  const onSubmitTree: SubmitHandler<ApplicationInputs> = useCallback(
+  const onSubmitTree: SubmitHandler<ApplicationStepTreeInputs> = useCallback(
     async (data) => {
       console.log({ data });
       // const application = await registerCandidate(data as ApplicationStepTreeInputs);
@@ -270,15 +275,20 @@ export const Application = observer(() => {
               />
               {cvError && <span>{cvError}</span>}
 
-              <SubmitButton type="submit" value="AVANÇAR" />
+              <SubmitButton
+                disabled={cv ? false : true}
+                type="submit"
+                value="AVANÇAR"
+              />
             </StyledForm>
           </FormContainer>
         );
       case 3:
-        const sentenceErrors = errors as FieldErrors<ApplicationStepTreeInputs>;
+        const sentenceErrors = testFormTree.formState
+          .errors as FieldErrors<ApplicationStepTreeInputs>;
         return (
           <FormContainer>
-            <StyledForm onSubmit={handleSubmit(onSubmitTree)}>
+            <StyledForm onSubmit={testFormTree.handleSubmit(onSubmitTree)}>
               <Headline>Etapa 3 de 3</Headline>
               <Title>Resumo Etapa 3</Title>
 
@@ -326,7 +336,9 @@ export const Application = observer(() => {
               <StyledLabel>
                 {CandidateSentencesTranslated["I_AM"]}...
               </StyledLabel>
-              <StyledTextarea {...register("i_am", { required: true })} />
+              <StyledTextarea
+                {...testFormTree.register("i_am", { required: true })}
+              />
               {sentenceErrors.i_am && (
                 <InputError>
                   Favor, preencher com uma sentença válida
@@ -336,7 +348,9 @@ export const Application = observer(() => {
               <StyledLabel>
                 {CandidateSentencesTranslated["I_LIKE"]}...
               </StyledLabel>
-              <StyledTextarea {...register("i_like", { required: true })} />
+              <StyledTextarea
+                {...testFormTree.register("i_like", { required: true })}
+              />
               {sentenceErrors.i_like && (
                 <InputError>
                   Favor, preencher com uma sentença válida
@@ -346,7 +360,9 @@ export const Application = observer(() => {
               <StyledLabel>
                 {CandidateSentencesTranslated["I_WANT"]}...
               </StyledLabel>
-              <StyledTextarea {...register("i_want", { required: true })} />
+              <StyledTextarea
+                {...testFormTree.register("i_want", { required: true })}
+              />
               {sentenceErrors.i_want && (
                 <InputError>
                   Favor, preencher com uma sentença válida
@@ -356,7 +372,9 @@ export const Application = observer(() => {
               <StyledLabel>
                 {CandidateSentencesTranslated["I_WILL"]}...
               </StyledLabel>
-              <StyledTextarea {...register("i_will", { required: true })} />
+              <StyledTextarea
+                {...testFormTree.register("i_will", { required: true })}
+              />
               {sentenceErrors.i_will && (
                 <InputError>
                   Favor, preencher com uma sentença válida
@@ -367,7 +385,7 @@ export const Application = observer(() => {
                 {CandidateSentencesTranslated["I_AM_PROUD_OF"]}...
               </StyledLabel>
               <StyledTextarea
-                {...register("i_am_proud_of", { required: true })}
+                {...testFormTree.register("i_am_proud_of", { required: true })}
               />
               {sentenceErrors.i_am_proud_of && (
                 <InputError>
@@ -400,24 +418,25 @@ export const Application = observer(() => {
         );
     }
   }, [
-    control,
-    cv,
-    cvError,
-    email,
-    errors,
-    handleInputCv,
-    handleSubmit,
-    linkedin,
-    name,
-    onSubmitOne,
-    onSubmitTree,
-    onSubmitTwo,
-    phone,
-    register,
-    salary,
-    setTechSkills,
     step,
+    errors,
+    handleSubmit,
+    onSubmitOne,
+    register,
+    control,
+    onSubmitTwo,
+    name,
+    email,
+    phone,
+    linkedin,
+    salary,
     filename,
+    cvError,
+    cv,
+    testFormTree,
+    onSubmitTree,
+    setTechSkills,
+    handleInputCv,
   ]);
 
   return (

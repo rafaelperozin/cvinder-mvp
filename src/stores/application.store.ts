@@ -135,7 +135,7 @@ export const ApplicationStore = types
       }
     }),
     addCv: flow(function* (file: File) {
-      self.processing = false;
+      self.processing = true;
       try {
         const formData = new FormData();
         formData.append("file", file);
