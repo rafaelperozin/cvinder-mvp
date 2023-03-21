@@ -3,6 +3,10 @@ import Select from "react-select";
 import { colors } from "./theme/colors";
 import { txt } from "src/styles/theme/typography";
 
+interface SubmitButtonProps {
+  submitted: boolean;
+}
+
 export const FormContainer = styled.div`
   padding: 50px 30px 20px;
   background-color: ${colors.grey.one};
@@ -109,21 +113,23 @@ export const StyledTextarea = styled.textarea`
   }
 `;
 
-export const SubmitButton = styled.input`
+export const SubmitButton = styled.input<SubmitButtonProps>`
   margin: 30px auto;
-  border: 1px solid ${colors.primary.light};
+  border-width: 0;
   border-radius: 3px;
   padding: 12px 16px;
   font-size: ${txt.size.regular};
   font-family: "Asap", sans-serif;
   font-weight: ${txt.weight.semibold};
   color: #fff;
-  background-color: ${colors.primary.light};
-  cursor: pointer;
+  background-color: ${(props) =>
+    props.submitted ? colors.grey.four : colors.primary.light};
+  cursor: ${(props) => (props.submitted ? "default" : "pointer")};
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: ${colors.primary.regular};
+    background-color: ${(props) =>
+      props.submitted ? colors.grey.four : colors.primary.regular};
   }
 `;
 

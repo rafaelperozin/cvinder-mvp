@@ -3,12 +3,17 @@ import { txt } from "src/styles/theme/typography";
 import styled from "styled-components";
 import { FaPaperclip } from "react-icons/fa";
 
-export const UploadButton = styled.label`
+interface UploadButtonProps {
+  fileUploaded?: boolean;
+}
+
+export const UploadButton = styled.label<UploadButtonProps>`
   display: inline-block;
   padding: 12px 16px;
   border-radius: 4px;
   color: #fff;
-  background-color: ${colors.secondary.regular};
+  background-color: ${(props) =>
+    props.fileUploaded ? colors.grey.four : colors.secondary.regular};
   cursor: pointer;
   font-size: ${txt.size.regular};
   font-weight: ${txt.weight.semibold};
@@ -16,7 +21,8 @@ export const UploadButton = styled.label`
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: ${colors.secondary.dark};
+    background-color: ${(props) =>
+      props.fileUploaded ? "#ccc" : colors.secondary.dark};
   }
 `;
 

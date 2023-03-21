@@ -72,6 +72,7 @@ export const Application = observer(() => {
       processing,
       step,
       addCv,
+      completeApplication,
       setStep,
       setTechSkills,
     },
@@ -106,11 +107,19 @@ export const Application = observer(() => {
     [registerCandidate]
   );
 
-  const onSubmitTwo = useCallback(() => setStep(3), [setStep]);
+  const onSubmitTwo = useCallback(() => {
+    setStep(3);
+  }, [setStep]);
 
-  const onSubmitTree: SubmitHandler<ApplicationStepTreeInputs> = useCallback(
+  const onSubmitTree: SubmitHandler<ApplicationInputs> = useCallback(
     async (data) => {
-      console.log({ data });
+      // completeApplication(
+      //   data.i__am,
+      //   data.i_am_proud_of,
+      //   data.i_linke,
+      //   data.i_want,
+      //   data.i_will
+      // );
       // const application = await registerCandidate(data as ApplicationStepTreeInputs);
       // setApplicationStatus(application);
     },
@@ -222,7 +231,11 @@ export const Application = observer(() => {
                 </InputWrapper>
               </InputContainer>
 
-              <SubmitButton type="submit" value="APLICAR PARA VAGA" />
+              <SubmitButton
+                type="submit"
+                value="APLICAR PARA VAGA"
+                submitted={processing}
+              />
             </StyledForm>
           </FormContainer>
         );
@@ -279,6 +292,7 @@ export const Application = observer(() => {
                 disabled={cv ? false : true}
                 type="submit"
                 value="AVANÇAR"
+                submitted={cv ? false : true}
               />
             </StyledForm>
           </FormContainer>
@@ -405,7 +419,11 @@ export const Application = observer(() => {
                 onChange={setTechSkills}
               />
 
-              <SubmitButton type="submit" value="FINALIZAR APLICAÇÃO" />
+              <SubmitButton
+                type="submit"
+                value="FINALIZAR APLICAÇÃO"
+                submitted={processing}
+              />
             </StyledForm>
           </FormContainer>
         );
@@ -424,6 +442,7 @@ export const Application = observer(() => {
     onSubmitOne,
     register,
     control,
+    processing,
     onSubmitTwo,
     name,
     email,

@@ -124,8 +124,8 @@ export const ApplicationStore = types
     createCandidate: flow(function* (input: CreateCandidateInput) {
       try {
         console.log("createCandidate", typeof input);
-        const repsonse = yield apiConnect.post("/candidate", input);
-        console.log("createCandidate response", repsonse);
+        const response = yield apiConnect.post("/candidate", input);
+        console.log("createCandidate response", response);
         return {
           status: ResponseStatus.SUCCESS,
           message: "Candidate created",
@@ -140,12 +140,12 @@ export const ApplicationStore = types
         const formData = new FormData();
         formData.append("file", file);
 
-        const repsonse = yield apiConnect.post(
+        const response = yield apiConnect.post(
           "/candidate/cv",
           formData,
           multipartHeader
         );
-        self.cv = repsonse.data.cv;
+        self.cv = response.data.cv;
         self.processing = false;
 
         return {
@@ -173,19 +173,19 @@ export const ApplicationStore = types
             sentence: i_am,
           },
           i_am_proud_of && {
-            candidateSentenceType: "I_AM",
+            candidateSentenceType: "I_AM_PROUD_OF",
             sentence: i_am_proud_of,
           },
           i_like && {
-            candidateSentenceType: "I_AM",
+            candidateSentenceType: "I_LIKE",
             sentence: i_like,
           },
           i_want && {
-            candidateSentenceType: "I_AM",
+            candidateSentenceType: "I_WANTM",
             sentence: i_want,
           },
           i_will && {
-            candidateSentenceType: "I_AM",
+            candidateSentenceType: "I_WILL",
             sentence: i_will,
           },
         ],
@@ -212,19 +212,23 @@ export const ApplicationStore = types
 
       if (self.techSkills && self.techSkills.length > 0) {
         console.log("self.techSkills", self.techSkills);
-        // try {
-        //   const repsonse = yield apiConnect.post('/candidate/tecskills', self.techSkills, multipartHeader);
-        //   self.cv = repsonse.data.cv;
-        //   self.processing = false;
+        try {
+          const response = yield apiConnect.post(
+            "/candidate/tecskills",
+            self.techSkills,
+            multipartHeader
+          );
+          self.techSkills = response.data.techSkills;
+          self.processing = false;
 
-        //   return {
-        //     status: ResponseStatus.SUCCESS,
-        //     message: 'techSkills added succesfully',
-        //   };
-        // } catch (error) {
-        //   self.processing = false;
-        //   throw error;
-        // }
+          return {
+            status: ResponseStatus.SUCCESS,
+            message: "techSkills added succesfully",
+          };
+        } catch (error) {
+          self.processing = false;
+          throw error;
+        }
       }
 
       self.processing = false;

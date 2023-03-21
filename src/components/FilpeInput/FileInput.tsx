@@ -1,4 +1,5 @@
 import React from "react";
+import { useStore } from "src/contexts/store.context";
 import {
   AttachIcon,
   FilenameText,
@@ -15,9 +16,13 @@ export const FileInput: React.FC<FileInputProps> = ({
   handleChange,
   filename = false,
 }) => {
+  const {
+    application: { cv },
+  } = useStore();
+
   return (
     <UploadContainer>
-      <UploadButton>
+      <UploadButton fileUploaded={filename ? true : false}>
         <AttachIcon />
         Selecionar arquivo
         <input
@@ -29,7 +34,11 @@ export const FileInput: React.FC<FileInputProps> = ({
         />
       </UploadButton>
       {filename ? (
-        <FilenameText>{filename}</FilenameText>
+        <FilenameText>
+          <a href={cv} target="_blank" rel="noreferrer">
+            Ver {filename}
+          </a>
+        </FilenameText>
       ) : (
         <FilenameText>Nenhum arquivo selecionado</FilenameText>
       )}
